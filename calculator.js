@@ -25,23 +25,61 @@ fn2();
 
 
 // 合起来的连环adder
+// function adder(num) {
+//     var total = num;  // 因为是闭包，所以每次call xxx函数的时候，这里定义的变量并不会被重置，因为并没有call到这行
+
+//     //定义一个函数，然后最后返回一个函数，这样就可以实现连环
+//     var xxx = function (num) {
+
+//         //到达连环的最后了，没有更多需要加的数了，直接出结果
+//         if (num === undefined) {
+//             return total;
+//         }
+//         // 如果还有数要加，就先把这次的数加到total里，继续return这个xxx函数用来接收下一个input
+//         total += num;
+//         return xxx;
+
+//     }
+//     return xxx; //xxx函数和total形成了闭包
+// }
+
+// var result = adder(10)(20)(30)(40)();
+// console.log(result);
+
+
+
+// 更复杂一点的adder（只考虑从左到右的顺序计算）
 function adder(num) {
     var total = num;
-
-    //定义一个函数，然后最后返回一个函数，这样就可以实现连环
+    var operator = "";
     var xxx = function (num) {
 
-        //到达连环的最后了，没有更多需要加的数了，直接出结果
         if (num === undefined) {
             return total;
         }
-        // 如果还有数要加，就先把这次的数加到total里，继续return这个xxx函数用来接收下一个input
-        total += num;
+        if (typeof num === "string") {
+            operator = num;
+        }
+        if (typeof num === "number") {
+            switch (operator) {
+                case '+':
+                    total += num;
+                    break;
+                case '-':
+                    total -= num;
+                    break;
+                case '*':
+                    total *= num;
+                    break;
+                case '/':
+                    total /= num;
+                    break;
+            }
+        }
         return xxx;
-
     }
-    return xxx; //xxx函数和total形成了闭包
+    return xxx;
 }
 
-var result = adder(10)(20)(30)(40)();
+var result = adder(10)("+")(20)("*")(5)();
 console.log(result);
